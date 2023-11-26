@@ -1,9 +1,9 @@
 import useLoadRoutes from '@/hooks/useLoadRouter.ts'
 import { lazy, Suspense } from 'react'
 import { RouteObject, useRoutes } from 'react-router-dom'
-
+import { LoginRouter } from './modeule/login.tsx'
 // 自定义懒加载函数
-const lazyLoad = (factory: () => Promise<any>) => {
+export const lazyLoad = (factory: () => Promise<any>) => {
   const Module = lazy(factory)
   return (
     <Suspense fallback={<div>loading</div>}>
@@ -13,39 +13,40 @@ const lazyLoad = (factory: () => Promise<any>) => {
 }
 
 export type IRouteObject = {
-  children?: IRouteObject[]
+  children?: any[]
   element?: React.ReactNode
   index?: boolean
   path?: string
   meta?: {
-    preCode: 1 | 2
+    title: string
+    preCode?: 1 | 2
   }
 } & RouteObject
 
 export const Routes: IRouteObject[] = [
-  {
-    path: '/login',
-    index: true,
-    element: lazyLoad(() => import('../views/login/index.tsx')),
-  },
+  ...LoginRouter,
   {
     path: '/main',
     element: lazyLoad(() => import('../views/home/index.tsx')),
     meta: {
+      title: 'home',
       preCode: 1,
     },
     children: [
       {
         index: true,
+        path: '/main/category',
         element: lazyLoad(() => import('../views/category/index.tsx')),
         meta: {
+          title: '分类1',
           preCode: 1,
         },
       },
       {
-        path: '/main/category',
+        path: '/main/category1',
         element: lazyLoad(() => import('../views/category/index.tsx')),
         meta: {
+          title: '分类2',
           preCode: 1,
         },
       },
@@ -53,6 +54,7 @@ export const Routes: IRouteObject[] = [
         path: '/main/about',
         element: lazyLoad(() => import('../views/about/index.tsx')),
         meta: {
+          title: '关于',
           preCode: 2,
         },
       },
